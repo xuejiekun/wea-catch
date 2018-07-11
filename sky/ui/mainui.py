@@ -56,10 +56,6 @@ class Ui_main(object):
         self.horizontalLayout.addWidget(self.btn_file)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
-        self.progressBar = QtGui.QProgressBar(self.centralwidget)
-        self.progressBar.setProperty("value", 24)
-        self.progressBar.setObjectName(_fromUtf8("progressBar"))
-        self.gridLayout.addWidget(self.progressBar, 1, 0, 1, 1)
         main.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(main)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 412, 23))
@@ -103,4 +99,4 @@ class Ui_main(object):
         self.actionOpen.setText(_translate("main", "Open", None))
         self.actionOpen.setShortcut(_translate("main", "Ctrl+O", None))
 
-import sky.ui.img_rc
+import img_rc

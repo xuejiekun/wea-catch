@@ -26,12 +26,20 @@ class Ui_about(object):
     def setupUi(self, about):
         about.setObjectName(_fromUtf8("about"))
         about.resize(434, 313)
-        self.gridLayout = QtGui.QGridLayout(about)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.gridLayout_2 = QtGui.QGridLayout(about)
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(about)
+        self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName(_fromUtf8("label"))
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.verticalLayout.addWidget(self.label, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
+        self.label_2 = QtGui.QLabel(about)
+        self.label_2.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.verticalLayout.addWidget(self.label_2, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
+        self.gridLayout_2.addLayout(self.verticalLayout, 0, 0, 1, 1)
 
         self.retranslateUi(about)
         QtCore.QMetaObject.connectSlotsByName(about)
@@ -39,4 +47,5 @@ class Ui_about(object):
     def retranslateUi(self, about):
         about.setWindowTitle(_translate("about", "About", None))
         self.label.setText(_translate("about", "TextLabel", None))
+        self.label_2.setText(_translate("about", "TextLabel", None))
 
