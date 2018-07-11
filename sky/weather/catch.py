@@ -35,6 +35,7 @@ class FoshanCatch(BaseRequests):
 
         if os.path.exists(file) and not overwrite:
             print('[{}]数据文件已存在，不用下载.'.format(file_name))
+            return
 
         # 请求下载地址
         while not self.get_page(self.data_url(start.strftime('%Y-%m-%d %H:%M:%S')), timeout=5):
