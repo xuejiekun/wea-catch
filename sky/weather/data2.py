@@ -2,10 +2,10 @@
 import os
 
 from sky.weather.filectrl import attr, DataControl, open_data_file
-from sky.databases import SQLite3
-from sky.datestr import *
+from sky.base.databases import SQLite3
+from sky.base.datestr import *
 
-from config import database_file, debug_dir
+from config import database_file_cd2, debug_dir_cd2
 
 
 class FoshanData(SQLite3, DataControl):
@@ -176,26 +176,22 @@ class FoshanData(SQLite3, DataControl):
 
 
 if __name__ == '__main__':
-    # 设置测试数据库
-    database_file = os.path.join('..', '..', database_file)
-    # 设置测试目录
-    debug_dir = os.path.join('..', '..', debug_dir)
+    if os.path.exists(database_file_cd2):
 
-    if os.path.exists(database_file):
         # wea_db = FoshanData(user=os.getenv('mysqlu'), password=os.getenv('mysqlp'), host='localhost', database='wea')
-        wea_db = FoshanData(database_file)
+        wea_db = FoshanData(database=database_file_cd2)
         i = []
-        n = 2
+        n = 3
 
         if n == 1:
             # 测试1 从文件更新数据
-            file =  os.path.join(debug_dir, '20180610', '20180610_0000.html')
+            file =  os.path.join(debug_dir_cd2, '20180610', '20180610_0000.html')
             wea_db.update_from_file(file)
 
         elif n==2:
             # 测试2 从文件夹更新数据
             # debug_dir = os.path.join(debug_dir, '20180618')
-            wea_db.update_from_dir(debug_dir)
+            wea_db.update_from_dir(debug_dir_cd2)
 
         elif n==3:
             # 测试3 查询指定范围的数据内容

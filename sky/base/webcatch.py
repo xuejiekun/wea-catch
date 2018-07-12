@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 
 class BaseRequests:
+
     def __init__(self):
         self.s = requests.Session()
 
@@ -33,3 +34,11 @@ class BaseRequests:
     def save_as_html(self, filename='1.html', encoding=None):
         with open(filename, 'w', encoding=encoding) as fp:
             fp.write(self.r.text)
+
+
+if __name__ == '__main__':
+    a = BaseRequests()
+    a.get_page(r'https://www.baidu.com')
+    a.build_bs4()
+    print(a.bsobj.title)
+    a.save_as_html(encoding='utf-8')

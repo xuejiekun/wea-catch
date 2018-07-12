@@ -5,7 +5,7 @@ from matplotlib.patches import Polygon
 from mpl_toolkits.basemap import Basemap
 from matplotlib import pyplot as plt
 
-from sky.kml import KmlMaker
+from sky.base import KmlMaker
 from sky.weather.data import FoshanData
 from config import map_dir, map_dir_cpy, database_file
 

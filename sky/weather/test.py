@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 import  matplotlib as mpl
-
 mpl.rcParams['font.sans-serif'] = ['SimHei']
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+
 from pandas import Series, DataFrame
 import numpy as np
 import os
 
+from sky.base.datestr import *
 from sky.weather.data import FoshanData
-from sky.datestr import *
 
-from config import database_file
+from config import database_file_cd2
 
 
 def get_mul(x, mul):
@@ -21,8 +22,7 @@ def get_mul(x, mul):
 
 
 # 获取数据
-database_file = os.path.join('..', '..', database_file)
-db = FoshanData(database_file)
+db = FoshanData(database=database_file_cd2)
 start = '2018-06-10 00:00:00'
 end = '2018-07-02 11:00:00'
 address_id = 123

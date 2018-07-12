@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
-from sky.plot import BasePlot
-from sky.datestr import *
+from sky.base import BasePlot
+from sky.base.datestr import *
 from sky.weather.data import FoshanData
 
-from config import database_file
+from config import database_file_cd2
 
 
 class WeatherPlot(BasePlot):
@@ -26,25 +26,25 @@ class WeatherPlot(BasePlot):
         label = ''
         if content=='rainfall':
             self.set_lim(-1, hours,
-                         0, round(max(data)+1),
-                         '时间', '时雨量(mm)',
-                         '{} 至 {} \n{} 降雨状况'.format(start, end, address_name))
+                         0, round(max(data)+1))
+            self.set_label('时间', '时雨量(mm)',
+                           '{} 至 {} \n{} 降雨状况'.format(start, end, address_name))
             self.set_tick(range(hours),
                           range(0, round(max(data) + 2), 2))
             label = '累积雨量:{}mm'.format(round(sum(data), 0))
 
         elif content=='temp':
             self.set_lim(0, hours-1,
-                         round(min(data)-1), round(max(data)+1),
-                         '时间', '气温(℃)',
-                         '{} 至 {} \n{} 气温状况'.format(start, end, address_name))
+                         round(min(data)-1), round(max(data)+1))
+            self.set_label('时间', '气温(℃)',
+                           '{} 至 {} \n{} 气温状况'.format(start, end, address_name))
             self.set_tick(range(hours),
                           range(round(min(data)-1), round(max(data)+2), 1))
             label = '最高温度:{}℃'.format(max(data), 0)
 
         # 设置x轴标记
         x_ticklable = []
-        if hours<50:
+        if hours < 50:
             base = datetime.strptime(start, need_format).hour
             for i in range(hours):
                 x_ticklable.append(base + i)
@@ -53,7 +53,7 @@ class WeatherPlot(BasePlot):
         else:
             self.ax.set_xticks([])
             grid = False
-        self.set_ticklabel(x_ticklable)
+        self.set_xticklabel(x_ticklable)
 
         if plot_format=='bar':
             self.ax.bar(range(0, hours), data)
@@ -72,10 +72,9 @@ class WeatherPlot(BasePlot):
 
 
 if __name__ == '__main__':
-    # 设置测试数据库
-    database_file = os.path.join('..', '..', database_file)
-    if os.path.exists(database_file):
-        wea_db = FoshanData(database_file)
+    if os.path.exists(database_file_cd2):
+
+        wea_db = FoshanData(database=database_file_cd2)
         wea_plt = WeatherPlot()
 
         start = '2018-06-12 16:00:00'

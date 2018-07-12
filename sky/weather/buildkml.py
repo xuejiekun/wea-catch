@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from sky.kml import KmlMaker
+from sky.base import KmlMaker
 from sky.weather.data import FoshanData
 from config import database_file
 

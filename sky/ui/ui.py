@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui
 
 from sky.ui import  Ui_main, Ui_about
 from sky.widget import ProgressBar
-from sky.weather.catch import FoshanCatch
+from sky.weather import FoshanCatch
 
 from config import user_agent, debug_dir_cd2
 
@@ -74,14 +74,14 @@ class Main(QtGui.QMainWindow, Ui_main):
         self.download_task.start()
 
     # 下载进度槽
-    def download_progress(self, prog, num, file_name):
+    def download_progress(self, prog, num, prompt):
         prog.setValue(num)
-        prog.setText('下载 {}'.format(file_name))
+        prog.setText(prompt)
 
     def close_progress(self, prog, date):
         self.gridLayout.removeWidget(prog)
         sip.delete(prog)
-        self.statusbar.showMessage('{}完毕下载'.format(date))
+        self.statusbar.showMessage('{} 任务完成'.format(date))
 
     # 定时操作
     def timerEvent(self, event):
@@ -120,9 +120,16 @@ class DownloadTask(QtCore.QThread):
 
         start = datetime.strptime(self.date, self.date_format)
         for i in range(24):
-            foshan.download_time(debug_dir_cd2, start.strftime('%Y-%m-%d %H:%M:%S'))
+            code = foshan.download_time(debug_dir_cd2, start.strftime('%Y-%m-%d %H:%M:%S'))
             file_name = start.strftime('%Y%m%d_%H00') + r'.html'
-            self.progress_sign.emit(self.prog, int((i+1)*100/24), file_name)
+
+            if code == FoshanCatch.expire:
+                prompt = '{} 已过期.'.format(file_name)
+            elif code == FoshanCatch.exist:
+                prompt = '{} 已存在，不用下载.'.format(file_name)
+            else:
+                prompt = '下载 {}'.format(file_name)
+            self.progress_sign.emit(self.prog, int((i+1)*100/24), prompt)
 
             start += timedelta(hours=1)
             time.sleep(0.4)

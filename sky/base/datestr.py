@@ -9,8 +9,8 @@ def get_end(start, date_format='%Y-%m-%d %H:%M:%S', **kwargs):
 
 
 # 时间字符串格式转换
-def change_format(datetime_str, ori_format, new_format):
-    return datetime.strptime(datetime_str, ori_format).strftime(new_format)
+def change_format(datetime_str, old_format, new_format):
+    return datetime.strptime(datetime_str, old_format).strftime(new_format)
 
 
 # 返回两个时间字符串的小时差值
@@ -23,3 +23,5 @@ if __name__ == '__main__':
     start = '2018-06-12 12:00:00'
     end = get_end(start, days=-1)
     print(end)
+    print(change_format(start, '%Y-%m-%d %H:%M:%S', '%Y%m%d_%H%M%S'))
+    print(total_hours(start, end, '%Y-%m-%d %H:%M:%S'))

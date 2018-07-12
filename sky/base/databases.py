@@ -5,6 +5,7 @@ import mysql.connector
 
 
 class BaseSQL:
+
     def __init__(self, connector, **kwargs):
         self.conn = connector.connect(**kwargs)
         self.cursor = self.conn.cursor()
@@ -51,12 +52,14 @@ class BaseSQL:
 
 
 class SQLite3(BaseSQL):
-    def __init__(self, database):
-        super().__init__(sqlite3, database=database)
+
+    def __init__(self, **kwargs):
+        super().__init__(sqlite3, **kwargs)
         self.cursor.execute('pragma foreign_keys = on')
 
 
 class MySQL(BaseSQL):
+
     def __init__(self, **kwargs):
         # mysql.connector.paramstyle = 'qmark'
         super().__init__(mysql.connector, **kwargs)

@@ -3,7 +3,7 @@ import json
 import os
 from abc import ABCMeta,abstractmethod
 
-from config import debug_dir
+from config import debug_dir_cd2
 
 
 class attr:
@@ -29,7 +29,6 @@ class DataControl(metaclass=ABCMeta):
         file_list = get_all_file(data_dir)
         for file in file_list:
             self.update_from_file(file, reload=reload)
-
 
 
 # 读取数据文件，返回list
@@ -68,9 +67,8 @@ def show_data(data):
 
 
 if __name__ == '__main__':
-    debug_dir_cd2 = os.path.join('..', '..', debug_dir)
-
     if os.path.exists(debug_dir_cd2):
+
         file_list = get_all_file(debug_dir_cd2)
         print(file_list)
 

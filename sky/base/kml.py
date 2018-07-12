@@ -7,7 +7,9 @@ class KmlMaker:
 
     def __init__(self):
         self.pm_list = []
+        self.fld = None
 
+    # 创建 <Placemark> 节点, 并追加到pm_list
     def bulid_pm(self, address_name, lng, lat):
         coor = '{},{}'.format(lng, lat)
         pm = KML.Placemark(
@@ -19,20 +21,28 @@ class KmlMaker:
         self.pm_list.append(pm)
         return pm
 
+    # 获取list(<Placemark>)
     def get_pm_list(self):
         return self.pm_list
 
+    # 创建 <Folder> 节点
+    def get_fld(self):
+        if not self.pm_list:
+            return None
+
+        self.fld = KML.Folder(self.pm_list[0])
+        for pm in self.pm_list[1:]:
+            self.fld.append(pm)
+        return self.fld
+
+    # 生成kml文件
     def build_kml(self, filename):
-        if self.pm_list:
-            # 建立fld
-            fld = KML.Folder(self.pm_list[0])
-            for pm in self.pm_list[1:]:
-                fld.append(pm)
-            # 解析fld
-            content = etree.tostring(fld, pretty_print=True, )
-            with open(filename, 'wb') as fp:
-                fp.write(content)
-        return self.pm_list
+        if self.get_fld() is None:
+            return
+
+        content = etree.tostring(self.fld, pretty_print=True)
+        with open(filename, 'wb') as fp:
+            fp.write(content)
 
 
 if __name__ == '__main__':

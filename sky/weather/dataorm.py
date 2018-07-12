@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
-from sqlalchemy import and_
 import time
+from sqlalchemy import and_
+from datetime import datetime
 
-from sky.weather.tableobj import Address, Dat, Base
-from sky.datestr import *
+from sky.weather.model import Address, Dat, Base
 from sky.weather.filectrl import attr, DataControl, open_data_file
-from sky.orm import BaseORM
 from sky.weather.sqltest import SQLite3Test, MySQLTest, MSSQLTest
 
+from sky.base import BaseORM
 from config import debug_dir_cd2
 
 # 过滤函数
@@ -160,13 +160,13 @@ class FoshanData(BaseORM, DataControl):
 if __name__ == '__main__':
     # a = datetime.strptime('2018-07-11 00:00:00', '%Y-%m-%d %H:%M:%S')
     a = time.time()
-    db = FoshanData(MSSQLTest.database, echo=False, autocommit=False)
+    db = FoshanData(MySQLTest.database, echo=False, autocommit=False)
     # db.create_table()
-    db.update_from_dir(debug_dir_cd2)
+    # db.update_from_dir(debug_dir_cd2)
 
-    # print(db.get_address_id('禅城区张槎街道沙口水闸'))
+    print(db.get_address_id('禅城区张槎街道沙口水闸'))
     # print(db.get_address_id('禅城区张槎街道沙口水闸2'))
-    db.commit()
+    # db.commit()
     b = time.time()
     print((b - a) * 1000)
     db.close()

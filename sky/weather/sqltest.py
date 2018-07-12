@@ -18,4 +18,4 @@ class MSSQLTest():
 
 # sqlite3
 class SQLite3Test():
-    database = 'sqlite:///{}'.format(database_file)
+    database = 'sqlite:///{}'.format(database_file_cd2)
