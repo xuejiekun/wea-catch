@@ -7,18 +7,20 @@ from PyQt4 import QtCore, QtGui
 
 from sky.ui import  Ui_main, Ui_about
 from sky.widget import ProgressBar
-from sky.weather import FoshanCatch
+from sky.weather import FoshanCatch, FoshanData
+from sky.weather.filectrl import get_all_file
 
-from config import user_agent, debug_dir_cd2
+from config import Config
 
 class Main(QtGui.QMainWindow, Ui_main):
     barNum = 1
 
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
         super().setupUi(self)
         self.set_signal_slot()
         self.init_widget()
+        self.config = config
 
     # 初始化部分控件
     def init_widget(self):
@@ -35,6 +37,8 @@ class Main(QtGui.QMainWindow, Ui_main):
         self.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), self.open)
         # 关于(菜单)
         self.connect(self.actionAbout, QtCore.SIGNAL("triggered()"), self.about)
+        # 更新
+        self.connect(self.btn_update, QtCore.SIGNAL("clicked()"), self.update_data)
 
     # 选取文件
     def open(self):
@@ -54,6 +58,18 @@ class Main(QtGui.QMainWindow, Ui_main):
         self.ab = About()
         self.ab.show()
 
+    # 更新
+    def update_data(self):
+        self.statusbar.showMessage('更新中...')
+        print('更新中...')
+
+        self.new_progressbar()
+        print(self.config.debug_dir)
+        self.update_task = UpdateTask(self.config, self.progressBar)
+        self.update_task.progress_sign.connect(self.download_progress)
+        self.update_task.close_sign.connect(self.close_progress)
+        self.update_task.start()
+
     # 确定操作
     def confirm(self):
         # 获取日期
@@ -62,26 +78,30 @@ class Main(QtGui.QMainWindow, Ui_main):
         self.statusbar.showMessage('选择了 {}'.format(str(date)))
         print('选择了 {}'.format(str(date)))
 
+        self.new_progressbar()
+
+        # 新建下载线程，并与进度条建立信号槽
+        self.download_task = DownloadTask(self.config, self.progressBar, str(date))
+        self.download_task.progress_sign.connect(self.download_progress)
+        self.download_task.close_sign.connect(self.close_progress)
+        self.download_task.start()
+
+    def new_progressbar(self):
         # self.progressBar = QtGui.QProgressBar(self.centralwidget)
         self.progressBar = ProgressBar(self.centralwidget)
         self.gridLayout.addWidget(self.progressBar, self.barNum, 0, 1, 1)
         self.barNum += 1
-
-        # 新建下载线程，并与进度条建立信号槽
-        self.download_task = DownloadTask(self.progressBar, str(date))
-        self.download_task.progress_sign.connect(self.download_progress)
-        self.download_task.close_sign.connect(self.close_progress)
-        self.download_task.start()
 
     # 下载进度槽
     def download_progress(self, prog, num, prompt):
         prog.setValue(num)
         prog.setText(prompt)
 
-    def close_progress(self, prog, date):
+    def close_progress(self, prog, prompt):
         self.gridLayout.removeWidget(prog)
         sip.delete(prog)
-        self.statusbar.showMessage('{} 任务完成'.format(date))
+        self.barNum -= 1
+        self.statusbar.showMessage(prompt)
 
     # 定时操作
     def timerEvent(self, event):
@@ -95,7 +115,7 @@ class About(QtGui.QDialog ,Ui_about):
         self.showDate()
 
     def showDate(self):
-        pixmap = QtGui.QPixmap(r'F:\Project\Python\web_catch\wea\img\out晒头.jpg')
+        pixmap = QtGui.QPixmap(":/img/out晒头.jpg")
         scaredPixmap = pixmap.scaled(120, 120, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
         self.label.setPixmap(scaredPixmap)
 
@@ -108,19 +128,20 @@ class DownloadTask(QtCore.QThread):
     progress_sign = QtCore.pyqtSignal(QtGui.QProgressBar, int, str)
     close_sign = QtCore.pyqtSignal(QtGui.QProgressBar, str)
 
-    def __init__(self, prog, date, date_format='%Y-%m-%d'):
+    def __init__(self, config, prog, date, date_format='%Y-%m-%d', ):
         super().__init__()
         self.prog = prog
         self.date = date
         self.date_format = date_format
+        self.config = config
 
     def run(self):
         foshan = FoshanCatch()
-        foshan.set_headers(user_agent)
+        foshan.set_headers(self.config.user_agent)
 
         start = datetime.strptime(self.date, self.date_format)
         for i in range(24):
-            code = foshan.download_time(debug_dir_cd2, start.strftime('%Y-%m-%d %H:%M:%S'))
+            code = foshan.download_time(self.config.debug_dir, start.strftime('%Y-%m-%d %H:%M:%S'), overwrite=self.config.overwrite)
             file_name = start.strftime('%Y%m%d_%H00') + r'.html'
 
             if code == FoshanCatch.expire:
@@ -134,17 +155,51 @@ class DownloadTask(QtCore.QThread):
             start += timedelta(hours=1)
             time.sleep(0.4)
 
-        self.close_sign.emit(self.prog, str(self.date))
+        self.close_sign.emit(self.prog, '{} 任务完成'.format(str(self.date)))
 
 
-if __name__ == '__main__':
+class UpdateTask(QtCore.QThread):
+    progress_sign = QtCore.pyqtSignal(QtGui.QProgressBar, int, str)
+    close_sign = QtCore.pyqtSignal(QtGui.QProgressBar, str)
+
+    def __init__(self, config, prog):
+        super().__init__()
+        self.config = config
+        self.prog = prog
+
+    def run(self):
+        foshan = FoshanData(database=self.config.database_file)
+        file_list = get_all_file(self.config.debug_dir)
+
+        all = len(file_list)
+        index = 0
+        for file in file_list:
+            file_name = file.split('\\')[-1]
+            self.progress_sign.emit(self.prog, int((index/all)*100), '读取 {}'.format(file_name))
+
+            foshan.update_from_file(file, self.config.reload)
+            index += 1
+            self.progress_sign.emit(self.prog, int((index/all)*100), '从 {} 更新完毕'.format(file_name))
+
+        self.close_sign.emit(self.prog, '数据更新完毕')
+        foshan.close()
+
+
+def run_gui(config):
     app = QtGui.QApplication(sys.argv)
 
     trans = QtCore.QTranslator()
     trans.load("zh_CN")  # 没有后缀.qm
     app.installTranslator(trans)
 
-    ui = Main()
+    ui = Main(config)
     ui.show()
 
     sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    cf = Config(current=False)
+    cf.set_overwrite(True)
+    cf.set_reload(True)
+    run_gui(cf)

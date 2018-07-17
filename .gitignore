@@ -2,6 +2,7 @@
 
 !/sky/
 !app.py
+!app-gui.py
 !config.py
 !create.py
 

@@ -52,6 +52,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="btn_update">
+          <property name="text">
+           <string>update</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="btn_file">
           <property name="text">
            <string>open</string>
@@ -116,6 +123,13 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>btn_file</tabstop>
+  <tabstop>text_showdate</tabstop>
+  <tabstop>btn_confirm</tabstop>
+  <tabstop>calendarWidget</tabstop>
+  <tabstop>btn_update</tabstop>
+ </tabstops>
  <resources>
   <include location="img.qrc"/>
  </resources>

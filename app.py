@@ -2,10 +2,9 @@
 import argparse
 import time
 
-from sky.weather.catch import FoshanCatch
-from sky.weather.data import FoshanData
+from sky.weather import FoshanCatch, FoshanData
 from sky.weather.plot import WeatherPlot
-from sky.datestr import *
+from sky.base.datestr import *
 
 from config import user_agent, debug_dir, database_file
 
@@ -21,13 +20,13 @@ def update(start=None, end=None, date_format='%Y-%m-%d %H:%M:%S', yesterday=Fals
     elif start and end:
         foshan.download_data(debug_dir, start, end, date_format, overwrite)
 
-    wea_db = FoshanData(database_file)
+    wea_db = FoshanData(database=database_file)
     wea_db.update_from_dir(debug_dir, reload)
     wea_db.close()
 
 
 def plot(content, address_id, start, end=None, date_format='%Y-%m-%d %H:%M:%S'):
-    wea_db = FoshanData(database_file)
+    wea_db = FoshanData(database=database_file)
     wea_plt = WeatherPlot()
     address_name = wea_db.get_address_name(address_id)
 
