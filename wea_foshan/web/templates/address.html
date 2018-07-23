@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<table border="1">
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>lng</th>
+        <th>lat</th>
+    </tr>
+    {% for addr in addrs %}
+        <tr>
+            <td>{{ addr.id }}</td>
+            <td>{{ addr.name }}</td>
+            <td>{{ addr.lng }}</td>
+            <td>{{ addr.lat }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

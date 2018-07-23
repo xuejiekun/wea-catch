@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <p>test</p>
+    <form enctype='multipart/form-data' method="post">
+        <input type="file" name="file">
+        <input type="submit" value="提交">
+        <button type="submit">提交</button>
+    </form>
+    {% if upload %}
+        <p>上传成功!</p>
+    {% endif %}
+{% endblock %}

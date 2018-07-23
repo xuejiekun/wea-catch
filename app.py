@@ -2,45 +2,44 @@
 import argparse
 import time
 
-from sky.weather import FoshanCatch, FoshanData
-from sky.weather.plot import WeatherPlot
 from sky.base.datestr import *
 
-from config import user_agent, debug_dir, database_file
+from wea_foshan.base import DataManager, WeaCatch
+from wea_foshan.base.plot import WeaPlot
+from config import Config
 
 
 def update(start=None, end=None, date_format='%Y-%m-%d %H:%M:%S', yesterday=False, overwrite=False, reload=False):
-    foshan = FoshanCatch()
-    foshan.set_headers(user_agent)
+    catch = WeaCatch()
 
     if not start and not end:
-        foshan.download_today(debug_dir, yesterday, overwrite)
+        catch.download_today(Config.debug_data_dir, yesterday, overwrite)
     elif start and not end:
-        foshan.download_time(debug_dir, start, date_format, overwrite)
+        catch.download_time(Config.debug_data_dir, start, date_format, overwrite)
     elif start and end:
-        foshan.download_data(debug_dir, start, end, date_format, overwrite)
+        catch.download_data(Config.debug_data_dir, start, end, date_format, overwrite)
 
-    wea_db = FoshanData(database=database_file)
-    wea_db.update_from_dir(debug_dir, reload)
-    wea_db.close()
+    db = DataManager(database=Config.database_file)
+    db.update_from_dir(Config.debug_data_dir, reload)
+    db.close()
 
 
 def plot(content, address_id, start, end=None, date_format='%Y-%m-%d %H:%M:%S'):
-    wea_db = FoshanData(database=database_file)
-    wea_plt = WeatherPlot()
-    address_name = wea_db.get_address_name(address_id)
+    db = DataManager(database=Config.database_file)
+    wea_plt = WeaPlot()
+    address_name = db.get_address_name(address_id)
 
     if end:
-        data = list(wea_db.query_dat(content, address_id, start, end, date_format))
+        data = list(db.query_dat(content, address_id, start, end, date_format))
     else:
-        data = list(wea_db.query_dat_24(content, address_id, start, date_format))
+        data = list(db.query_dat_24(content, address_id, start, date_format))
 
     if content=='rainfall':
         wea_plt.plot_rainfall(data, address_name, start, date_format)
     elif content=='temp':
         wea_plt.plot_temp(data, address_name, start, date_format)
 
-    wea_db.close()
+    db.close()
 
 
 if __name__ == '__main__':

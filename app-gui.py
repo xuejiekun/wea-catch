@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*-
-from sky.ui.ui import run_gui
+from wea_foshan.gui.ui import run_gui
 from config import Config
 
+
 if __name__ == '__main__':
-    cf = Config(current=True)
+    cf = Config()
     cf.set_reload(True)
+    cf.set_overwrite(True)
     run_gui(cf)

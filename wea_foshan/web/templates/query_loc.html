@@ -1,0 +1,10 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends 'base.html' %}
+
+
+{% block content %}
+    {{ wtf.quick_form(form) }}
+    {% if prompt %}
+        <p>{{ prompt }}</p>
+    {% endif %}
+{% endblock %}

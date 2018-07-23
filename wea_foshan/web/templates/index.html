@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h1>hello, demo1</h1>
+
+    <p><a href="{{ url_for('index.main') }}">index</a></p>
+    <p><a href="{{ url_for('func.address') }}">address</a></p>
+    <p><a href="{{ url_for('time_func.get_time') }}">get_time</a></p>
+    <p><a href="{{ url_for('post_func.form_normal') }}">form_normal</a></p>
+    <p><a href="{{ url_for('post_func.form_flask') }}">form_flask</a></p>
+    <p><a href="{{ url_for('loc_func.query_loc') }}">query_loc</a></p>
+
+    <p><a href="{{ url_for('index.test') }}">test</a></p>
+{% endblock %}

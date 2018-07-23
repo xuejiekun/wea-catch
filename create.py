@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
-from sky.weather.dataorm import FoshanData
+from wea_foshan.base.dataorm import DataManager
 
-db = FoshanData('sqlite:///data.db')
+db = DataManager('sqlite:///data.db')
 db.create_table()
 db.close()

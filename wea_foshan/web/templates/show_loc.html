@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>lng</th>
+        <th>lat</th>
+    </tr>
+    <tr>
+        <td>{{ addr.name }}</td>
+        <td>{{ addr.lng }}</td>
+        <td>{{ addr.lat }}</td>
+    </tr>
+</table>
+{% endblock %}

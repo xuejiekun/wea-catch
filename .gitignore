@@ -1,9 +1,7 @@
-/*
+.idea
+res
+uploads
+data.db
 
-!/sky/
-!app.py
-!app-gui.py
-!config.py
-!create.py
-
-!.gitignore
+*.pyc
+__pycache__

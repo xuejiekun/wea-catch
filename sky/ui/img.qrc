@@ -1,7 +1,0 @@
-<RCC>
-  <qresource prefix="/img">
-    <file alias="bird.jpg">../../img/bird_20160621_070435_thumb.jpg</file>
-    <file alias="huang.jpg">../../img/huang_20151017_120136_thumb.jpg</file>
-    <file alias="out晒头.jpg">../../img/out晒头.jpg</file>
-  </qresource>
-</RCC>

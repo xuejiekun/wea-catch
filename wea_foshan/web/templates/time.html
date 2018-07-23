@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <p>Time: {{ time }}</p>
+
+    <script>
+        var d = new Date({{ time }})
+        var timezone = d.getTimezoneOffset()/60
+
+        var hour = d.getHours()
+        var min = d.getMinutes()
+        var sec = d.getSeconds()
+
+        document.write(d)
+    </script>
+{% endblock %}
