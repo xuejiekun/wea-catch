@@ -187,11 +187,11 @@ if __name__ == '__main__':
     if os.path.exists(ConfigL2.database_file):
         db = DataManager(database=ConfigL2.database_file)
         i = []
-        n = 3
+        n = 1
 
         if n == 1:
             # 测试1 从文件更新数据
-            file =  os.path.join(ConfigL2.debug_data_dir, '20180617', '20180617_0000.html')
+            file =  os.path.join(ConfigL2.debug_data_dir, '20180801', '20180801_0300.html')
             db.update_from_file(file)
 
         elif n == 2:

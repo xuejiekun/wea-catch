@@ -34,9 +34,9 @@ class DataControl(metaclass=ABCMeta):
 # 读取数据文件，返回list
 def open_data_file(fileName):
     print('读取数据文件:{}'.format(fileName))
-    with open(fileName, 'r', encoding='utf-8') as fp:
+    with open(fileName, 'rb') as fp:
         try:
-            data = json.loads(fp.read())
+            data = json.loads(fp.read(), encoding='utf-8')
         except:
             print('数据文件格式不正确.')
             return []
@@ -73,4 +73,5 @@ if __name__ == '__main__':
         print(file_list)
 
         data = open_data_file(file_list[0])
+        # data = open_data_file(r'F:\Project\Python\web_catch\wea\res\debug_data\20180801\20180801_0300.html')
         show_data(data[:5])

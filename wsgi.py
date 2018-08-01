@@ -1,6 +1,8 @@
 import sys
 import os
+import inspect
 
-sys.path.insert(0, os.path.abspath('.'))
- 
+current_dir = os.path.dirname(inspect.getfile(inspect.currentframe()))
+sys.path.insert(0, current_dir)
+
 from manage import app as application

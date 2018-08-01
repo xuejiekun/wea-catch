@@ -2,6 +2,7 @@
 res
 uploads
 data.db
+service.log
 
 *.pyc
 __pycache__

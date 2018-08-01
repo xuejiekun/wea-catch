@@ -5,6 +5,6 @@ from config import Config
 
 if __name__ == '__main__':
     cf = Config()
-    cf.set_reload(True)
+    cf.set_reload(False)
     cf.set_overwrite(True)
     run_gui(cf)

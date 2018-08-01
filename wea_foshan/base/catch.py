@@ -53,12 +53,12 @@ class WeaCatch(BaseRequests):
             time.sleep(self.timeout)
 
         # 保存数据
-        if self.r.url == r'http://www.fs121.com/':
+        if self.response.url == r'http://www.fs121.com/':
             print('请求的[{}]数据已过期.'.format(file_name))
             return self.EXPIRE
         else:
-            self.save_as_html(file, encoding='utf-8')
-            print('下载完毕:{}'.format(self.r.url))
+            self.save_as_html(file)
+            print('下载完毕:{}'.format(self.response.url))
             return self.FINISH
 
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
         catch = WeaCatch()
         catch.set_headers(ConfigL2.user_agent)
-        n = 3
+        n = 2
 
         if n==1:
             # 测试1 下载指定范围
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
         elif n==2:
             # 测试2 下载指定小时
-            catch.download_time(ConfigL2.debug_data_dir, '2018-07-09 03:10:00')
+            catch.download_time(ConfigL2.debug_data_dir, '2018-08-01 00:10:00')
             # foshan.download_hour(debug_dir, '2018061723', '%Y%m%d%H')
 
         elif n==3:
