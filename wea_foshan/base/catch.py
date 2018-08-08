@@ -12,6 +12,7 @@ class WeaCatch(BaseRequests):
     FINISH = 0
     EXIST = 1
     EXPIRE= 2
+    NOTFOUND = 4
 
     home_url = r'http://www.fs121.gov.cn'
     home_url2 = r'http://www.fs121.com/wap/Awshour.aspx#sid=6'
@@ -56,10 +57,14 @@ class WeaCatch(BaseRequests):
         if self.response.url == r'http://www.fs121.com/':
             print('请求的[{}]数据已过期.'.format(file_name))
             return self.EXPIRE
-        else:
-            self.save_as_html(file)
-            print('下载完毕:{}'.format(self.response.url))
-            return self.FINISH
+
+        if self.response.status_code == 404:
+            print('[{}] 找不到.'.format(file_name))
+            return self.NOTFOUND
+
+        self.save_as_html(file)
+        print('下载完毕:{}'.format(self.response.url))
+        return self.FINISH
 
 
     # 下载指定日期的数据

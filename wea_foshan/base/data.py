@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import time
+import json
+import codecs
 
 from sky.base.database import SQLite3
 from sky.base.datestr import *
@@ -126,7 +128,7 @@ class DataManager(SQLite3, DataControl):
         # 查询数据库原有信息
         loc = self.query_loc(address_id)
         # 数据库没有记录并且有新信息
-        if not loc[0] and lng:
+        if (not loc[0] and lng) or (loc[0] != lng):
             self.cursor.execute('update address '
                                 'set lng=?, lat=?'
                                 'where id=?',
@@ -182,17 +184,63 @@ class DataManager(SQLite3, DataControl):
         self.update_all_loc(data)
         self.insert_all_dat(data, logtime)
 
+    def dump_file(self, date):
+        self.cursor.execute('select address.name, dat.temp, dat.rainfall, dat.wdir, dat.speed, '
+                          'address.lng, address.lat, address.road, address.eng_name, address.code '
+                          'from dat '
+                          'inner join address '
+                          'on dat.address_id = address.id '
+                          'where logtime = "{}"'.format(date.strftime('%Y-%m-%d %H:00:00')))
+
+        # 过滤1
+        def f(x):
+            if x is None:
+                x = ""
+            elif not isinstance(x, str):
+                x = str(x)
+            return x
+
+        # 过滤2
+        def g(x):
+            if x[4].endswith('.0'):
+                x[4] = x[4][:-2]
+            return x
+
+        dat = [list(map(f, i)) for i in self.fetchall()]
+        dat = list(map(g, dat))
+
+        body = json.dumps(dat, ensure_ascii=False). \
+            replace('", "', '","'). \
+            replace('0.0', '0'). \
+            replace(', [', ',[')
+
+        with open('{}.html'.format(date.strftime('%Y%m%d_%H00')), 'wb') as fp:
+            fp.write(codecs.BOM_UTF8 + body.encode('utf-8'))
+
+
+    def dump_file_date(self, date):
+        date = datetime(date.year, date.month, date.day)
+
+        # 下载当天
+        for i in range(24):
+            self.dump_file(date)
+            date += timedelta(hours=1)
+
 
 if __name__ == '__main__':
     if os.path.exists(ConfigL2.database_file):
         db = DataManager(database=ConfigL2.database_file)
         i = []
-        n = 1
+        n = 0
+
+        date = datetime(2018, 8, 3)
+        db.dump_file_date(date)
 
         if n == 1:
             # 测试1 从文件更新数据
-            file =  os.path.join(ConfigL2.debug_data_dir, '20180801', '20180801_0300.html')
-            db.update_from_file(file)
+            # file =  os.path.join(ConfigL2.debug_data_dir, '新建文件夹', '20180803_0700.html')
+            file = os.path.join(ConfigL2.debug_data_dir, '20180804', '20180804_0700.html')
+            db.update_from_file(file, reload=True)
 
         elif n == 2:
             # 测试2 从文件夹更新数据
@@ -212,8 +260,8 @@ if __name__ == '__main__':
             # i = wea_db.query_dat_24('rainfall', 35, '2018-06-12 12:00:00')
             i = db.query_dat_24('rainfall', 35, '2018061212', '%Y%m%d%H')
 
-        i = list(i)
-        print(i)
-        print(len(i))
+        # i = list(i)
+        # print(i)
+        # print(len(i))
 
         db.close()
